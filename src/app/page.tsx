@@ -73,7 +73,7 @@ export default async function HomePage() {
                 of Ancient India
               </h1>
 
-              <p className="mt-6 text-lg text-stone-600 dark:text-stone-400">
+              <p className="mt-6 text-lg text-stone-700 dark:text-stone-300">
                 Explore our curated collection of authenticated historical and cultural
                 artifacts. From ancient sculptures to rare manuscripts, each piece tells
                 a unique story of our heritage.
@@ -97,15 +97,15 @@ export default async function HomePage() {
               <div className="mt-12 flex justify-center gap-8 lg:justify-start">
                 <div>
                   <p className="text-3xl font-bold text-amber-600">500+</p>
-                  <p className="text-sm text-stone-500">Verified Artifacts</p>
+                  <p className="text-sm text-stone-600 dark:text-stone-400">Verified Artifacts</p>
                 </div>
                 <div>
                   <p className="text-3xl font-bold text-amber-600">2,000+</p>
-                  <p className="text-sm text-stone-500">Happy Collectors</p>
+                  <p className="text-sm text-stone-600 dark:text-stone-400">Happy Collectors</p>
                 </div>
                 <div>
                   <p className="text-3xl font-bold text-amber-600">8</p>
-                  <p className="text-sm text-stone-500">Categories</p>
+                  <p className="text-sm text-stone-600 dark:text-stone-400">Categories</p>
                 </div>
               </div>
             </div>

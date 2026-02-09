@@ -40,6 +40,12 @@ export function Header() {
     const [isScrolled, setIsScrolled] = useState(false)
     const [showUserMenu, setShowUserMenu] = useState(false)
     const [searchQuery, setSearchQuery] = useState('')
+    const [mounted, setMounted] = useState(false)
+
+    // Prevent hydration mismatch - only show cart count after mount
+    useEffect(() => {
+        setMounted(true)
+    }, [])
 
     // Fetch user on mount
     useEffect(() => {
@@ -173,7 +179,7 @@ export function Header() {
                                 className="relative rounded-full p-2 text-stone-600 transition-colors hover:bg-stone-100 dark:text-stone-300 dark:hover:bg-stone-800"
                             >
                                 <ShoppingCart className="h-5 w-5" />
-                                {getTotalItems() > 0 && (
+                                {mounted && getTotalItems() > 0 && (
                                     <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-amber-600 text-xs font-medium text-white">
                                         {getTotalItems()}
                                     </span>

@@ -51,7 +51,7 @@ async function getDashboardStats() {
         supabase.from('orders').select('total_amount'),
         supabase
             .from('orders')
-            .select(`*, profile:profiles(full_name, email)`)
+            .select(`*`)
             .order('created_at', { ascending: false })
             .limit(5),
         supabase
@@ -227,7 +227,7 @@ export default async function AdminDashboard() {
                                                     </p>
                                                 </td>
                                                 <td className="py-3 text-stone-600 dark:text-stone-400">
-                                                    {order.profile?.full_name || order.profile?.email}
+                                                    {order.shipping_address?.full_name || 'N/A'}
                                                 </td>
                                                 <td className="py-3">
                                                     <Badge className={statusColors[order.status]}>

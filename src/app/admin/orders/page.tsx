@@ -29,11 +29,14 @@ export default function AdminOrdersPage() {
 
     async function fetchOrders() {
         setIsLoading(true)
-        const { data } = await supabase
+        const { data, error } = await supabase
             .from('orders')
-            .select(`*, profile:profiles(full_name, email), order_items(count)`)
+            .select(`*, order_items(id)`)
             .order('created_at', { ascending: false })
 
+        if (error) {
+            console.error('Error fetching orders:', error)
+        }
         setOrders((data || []) as any)
         setIsLoading(false)
     }
@@ -89,8 +92,8 @@ export default function AdminOrdersPage() {
                                 key={item.href}
                                 href={item.href}
                                 className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${item.active
-                                        ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
-                                        : 'text-stone-600 hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800'
+                                    ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+                                    : 'text-stone-600 hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800'
                                     }`}
                             >
                                 <item.icon className="h-4 w-4" />
@@ -157,10 +160,10 @@ export default function AdminOrdersPage() {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <p className="text-stone-900 dark:text-white">
-                                                    {order.profile?.full_name || 'N/A'}
+                                                    {order.shipping_address?.full_name || 'N/A'}
                                                 </p>
                                                 <p className="text-xs text-stone-500">
-                                                    {order.profile?.email}
+                                                    {order.shipping_address?.phone}
                                                 </p>
                                             </td>
                                             <td className="px-6 py-4 text-stone-600 dark:text-stone-400">
@@ -173,13 +176,13 @@ export default function AdminOrdersPage() {
                                                 <select
                                                     value={order.status}
                                                     onChange={(e) => updateOrderStatus(order.id, e.target.value)}
-                                                    className={`rounded-lg border-0 py-1 pl-2 pr-8 text-xs font-medium ${statusColors[order.status]}`}
+                                                    className={`rounded-lg border border-stone-200 bg-white py-1.5 pl-3 pr-8 text-xs font-medium dark:border-stone-700 dark:bg-stone-800 ${statusColors[order.status]}`}
                                                 >
-                                                    <option value="pending">Pending</option>
-                                                    <option value="processing">Processing</option>
-                                                    <option value="shipped">Shipped</option>
-                                                    <option value="delivered">Delivered</option>
-                                                    <option value="cancelled">Cancelled</option>
+                                                    <option value="pending" className="bg-white text-stone-900 dark:bg-stone-800 dark:text-white">Pending</option>
+                                                    <option value="processing" className="bg-white text-stone-900 dark:bg-stone-800 dark:text-white">Processing</option>
+                                                    <option value="shipped" className="bg-white text-stone-900 dark:bg-stone-800 dark:text-white">Shipped</option>
+                                                    <option value="delivered" className="bg-white text-stone-900 dark:bg-stone-800 dark:text-white">Delivered</option>
+                                                    <option value="cancelled" className="bg-white text-stone-900 dark:bg-stone-800 dark:text-white">Cancelled</option>
                                                 </select>
                                             </td>
                                             <td className="px-6 py-4">

@@ -1,13 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import toast from 'react-hot-toast'
-import { ChevronRight, ShoppingBag, MapPin, CreditCard, Check, Truck } from 'lucide-react'
+import { ChevronRight, ShoppingBag, MapPin, CreditCard, Check, Truck, Loader2 } from 'lucide-react'
 import { Button, Input, Card, CardContent, Textarea } from '@/components/ui'
 import { useCartStore, useAuthStore } from '@/lib/store'
 import { createClient } from '@/lib/supabase/client'
@@ -33,13 +33,19 @@ export default function CheckoutPage() {
     const [step, setStep] = useState<'address' | 'review' | 'confirm'>('address')
     const [isLoading, setIsLoading] = useState(false)
     const [shippingAddress, setShippingAddress] = useState<AddressFormData | null>(null)
+    const [mounted, setMounted] = useState(false)
+
+    // Prevent hydration mismatch
+    useEffect(() => {
+        setMounted(true)
+    }, [])
 
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm<AddressFormData>({
-        resolver: zodResolver(addressSchema),
+        resolver: zodResolver(addressSchema) as any,
         defaultValues: {
             fullName: user?.full_name || '',
             phone: user?.phone || '',
@@ -122,6 +128,15 @@ export default function CheckoutPage() {
         } finally {
             setIsLoading(false)
         }
+    }
+
+    // Show loading while hydrating
+    if (!mounted) {
+        return (
+            <div className="flex min-h-[60vh] flex-col items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-amber-600" />
+            </div>
+        )
     }
 
     if (items.length === 0 && step !== 'confirm') {
