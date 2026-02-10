@@ -24,8 +24,6 @@ import { createClient } from '@/lib/supabase/client'
 const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/artifacts', label: 'Artifacts' },
-    { href: '/categories', label: 'Categories' },
-    { href: '/about', label: 'About' },
 ]
 
 export function Header() {
