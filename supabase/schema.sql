@@ -58,10 +58,12 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE OR REPLACE FUNCTION public.prevent_unauthorized_role_change()
 RETURNS TRIGGER AS $$
 BEGIN
-    IF NEW.role IS DISTINCT FROM OLD.role AND NOT EXISTS (
-        SELECT 1 FROM public.profiles p
-        WHERE p.id = auth.uid() AND p.role = 'admin'
-    ) THEN
+    IF NEW.role IS DISTINCT FROM OLD.role
+       AND auth.role() <> 'service_role'
+       AND NOT EXISTS (
+           SELECT 1 FROM public.profiles p
+           WHERE p.id = auth.uid() AND p.role = 'admin'
+       ) THEN
         RAISE EXCEPTION 'Only admins can change user roles';
     END IF;
 
