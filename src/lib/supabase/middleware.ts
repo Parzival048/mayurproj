@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { isAdminRole } from '@/lib/auth'
 
 export async function updateSession(request: NextRequest) {
     let supabaseResponse = NextResponse.next({
@@ -45,7 +46,6 @@ export async function updateSession(request: NextRequest) {
     const isAuthRoute = authRoutes.some(route =>
         request.nextUrl.pathname.startsWith(route)
     )
-    const normalizeRole = (role: unknown) => String(role ?? '').trim().toLowerCase()
 
     // Redirect to login if accessing protected route without auth
     if (!user && isProtectedRoute) {
@@ -78,7 +78,7 @@ export async function updateSession(request: NextRequest) {
             .eq('id', user.id)
             .single()
 
-        if (normalizeRole(profile?.role) !== 'admin') {
+        if (!isAdminRole(profile?.role)) {
             const url = request.nextUrl.clone()
             url.pathname = '/'
             return NextResponse.redirect(url)

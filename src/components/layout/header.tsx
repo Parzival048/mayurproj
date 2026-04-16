@@ -20,15 +20,13 @@ import { Button } from '@/components/ui'
 import { cn, formatPrice } from '@/lib/utils'
 import { useCartStore, useAuthStore, useUIStore } from '@/lib/store'
 import { createClient } from '@/lib/supabase/client'
+import { normalizeRole } from '@/lib/auth'
 import type { Profile } from '@/types'
 
 const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/artifacts', label: 'Artifacts' },
 ]
-
-const toRole = (role: unknown): 'admin' | 'customer' =>
-    String(role ?? 'customer').trim().toLowerCase() === 'admin' ? 'admin' : 'customer'
 
 const toProfile = (
     authUser: { id: string; email?: string | null; user_metadata?: { full_name?: string | null } } | null,
@@ -41,7 +39,7 @@ const toProfile = (
         email: profile?.email || authUser.email || '',
         full_name: profile?.full_name ?? authUser.user_metadata?.full_name ?? null,
         phone: profile?.phone ?? null,
-        role: toRole(profile?.role),
+        role: normalizeRole(profile?.role),
         avatar_url: profile?.avatar_url ?? null,
         created_at: profile?.created_at || new Date().toISOString(),
         updated_at: profile?.updated_at || new Date().toISOString(),

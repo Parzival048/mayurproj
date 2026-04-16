@@ -9,6 +9,7 @@ import { z } from 'zod'
 import toast from 'react-hot-toast'
 import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react'
 import { Button, Input, Card, CardContent } from '@/components/ui'
+import { isAdminRole } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/client'
 
 const loginSchema = z.object({
@@ -53,13 +54,27 @@ function LoginForm() {
             if (!searchParams.get('redirect')) {
                 const { data: { user } } = await supabase.auth.getUser()
                 if (user) {
+                    await supabase
+                        .from('profiles')
+                        .upsert(
+                            {
+                                id: user.id,
+                                email: user.email || '',
+                                full_name: user.user_metadata?.full_name ?? null,
+                            },
+                            {
+                                onConflict: 'id',
+                                ignoreDuplicates: true,
+                            }
+                        )
+
                     const { data: profile } = await supabase
                         .from('profiles')
                         .select('role')
                         .eq('id', user.id)
                         .single()
 
-                    if (String(profile?.role ?? '').trim().toLowerCase() === 'admin') {
+                    if (isAdminRole(profile?.role)) {
                         nextPath = '/admin'
                     }
                 }
