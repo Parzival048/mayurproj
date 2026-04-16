@@ -9,7 +9,7 @@ import { z } from 'zod'
 import toast from 'react-hot-toast'
 import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react'
 import { Button, Input, Card, CardContent } from '@/components/ui'
-import { isAdminRole } from '@/lib/auth'
+import { resolveUserRole } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/client'
 
 const loginSchema = z.object({
@@ -74,7 +74,7 @@ function LoginForm() {
                         .eq('id', user.id)
                         .single()
 
-                    if (isAdminRole(profile?.role)) {
+                    if (resolveUserRole(profile?.role, user.email) === 'admin') {
                         nextPath = '/admin'
                     }
                 }

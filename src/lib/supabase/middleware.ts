@@ -1,6 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
-import { isAdminRole } from '@/lib/auth'
+import { resolveUserRole } from '@/lib/auth'
 
 export async function updateSession(request: NextRequest) {
     let supabaseResponse = NextResponse.next({
@@ -78,7 +78,7 @@ export async function updateSession(request: NextRequest) {
             .eq('id', user.id)
             .single()
 
-        if (!isAdminRole(profile?.role)) {
+        if (resolveUserRole(profile?.role, user.email) !== 'admin') {
             const url = request.nextUrl.clone()
             url.pathname = '/'
             return NextResponse.redirect(url)

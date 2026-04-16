@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter, Playfair_Display } from 'next/font/google'
 import { Toaster } from 'react-hot-toast'
+import { AuthSync } from '@/components/auth/auth-sync'
 import { Header, Footer } from '@/components/layout'
 import './globals.css'
 
@@ -72,6 +73,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
       <body className="min-h-screen bg-white text-stone-900 antialiased dark:bg-stone-950 dark:text-stone-100">
+        <AuthSync />
         <Toaster
           position="top-center"
           toastOptions={{

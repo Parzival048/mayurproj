@@ -62,16 +62,30 @@ export default function CheckoutPage() {
     }
 
     const handlePlaceOrder = async () => {
-        if (!shippingAddress || !user) return
+        if (!shippingAddress) return
 
         setIsLoading(true)
 
         try {
+            let currentUserId = user?.id || null
+            if (!currentUserId) {
+                const {
+                    data: { user: authUser },
+                } = await supabase.auth.getUser()
+                currentUserId = authUser?.id || null
+            }
+
+            if (!currentUserId) {
+                toast.error('Please sign in again to place your order.')
+                router.push('/login?redirect=/checkout')
+                return
+            }
+
             // Create order
             const { data: order, error: orderError } = await supabase
                 .from('orders')
                 .insert({
-                    user_id: user.id,
+                    user_id: currentUserId,
                     shipping_address: {
                         full_name: shippingAddress.fullName,
                         phone: shippingAddress.phone,
@@ -110,7 +124,7 @@ export default function CheckoutPage() {
             await supabase
                 .from('cart_items')
                 .delete()
-                .eq('user_id', user.id)
+                .eq('user_id', currentUserId)
 
             // Clear local cart
             clearCart()

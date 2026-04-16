@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 import { Card, CardContent, Badge } from '@/components/ui'
 import { createClient } from '@/lib/supabase/server'
-import { isAdminRole } from '@/lib/auth'
+import { resolveUserRole } from '@/lib/auth'
 import { formatPrice, formatDate, statusColors } from '@/lib/utils'
 import type { Metadata } from 'next'
 
@@ -35,7 +35,7 @@ async function getDashboardStats() {
         .eq('id', user.id)
         .single()
 
-    if (!isAdminRole(profile?.role)) redirect('/')
+    if (resolveUserRole(profile?.role, user.email) !== 'admin') redirect('/')
 
     // Get stats
     const [

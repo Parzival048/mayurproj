@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -20,38 +20,18 @@ import { Button } from '@/components/ui'
 import { cn, formatPrice } from '@/lib/utils'
 import { useCartStore, useAuthStore, useUIStore } from '@/lib/store'
 import { createClient } from '@/lib/supabase/client'
-import { normalizeRole } from '@/lib/auth'
-import type { Profile } from '@/types'
 
 const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/artifacts', label: 'Artifacts' },
 ]
 
-const toProfile = (
-    authUser: { id: string; email?: string | null; user_metadata?: { full_name?: string | null } } | null,
-    profile: Partial<Profile> | null
-): Profile | null => {
-    if (!authUser) return null
-
-    return {
-        id: authUser.id,
-        email: profile?.email || authUser.email || '',
-        full_name: profile?.full_name ?? authUser.user_metadata?.full_name ?? null,
-        phone: profile?.phone ?? null,
-        role: normalizeRole(profile?.role),
-        avatar_url: profile?.avatar_url ?? null,
-        created_at: profile?.created_at || new Date().toISOString(),
-        updated_at: profile?.updated_at || new Date().toISOString(),
-    }
-}
-
 export function Header() {
     const pathname = usePathname()
     const router = useRouter()
-    const supabase = useMemo(() => createClient(), [])
+    const supabase = createClient()
 
-    const { user, setUser, setLoading } = useAuthStore()
+    const { user, isLoading, setUser } = useAuthStore()
     const { items, isOpen, toggleCart, getTotalItems } = useCartStore()
     const { isMobileMenuOpen, toggleMobileMenu, closeMobileMenu } = useUIStore()
 
@@ -64,45 +44,6 @@ export function Header() {
     useEffect(() => {
         setMounted(true)
     }, [])
-
-    // Fetch user on mount
-    useEffect(() => {
-        const fetchUser = async () => {
-            setLoading(true)
-            const { data: { user: authUser } } = await supabase.auth.getUser()
-
-            if (authUser) {
-                const { data: profile } = await supabase
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', authUser.id)
-                    .single()
-
-                setUser(toProfile(authUser, profile))
-            } else {
-                setUser(null)
-            }
-            setLoading(false)
-        }
-
-        fetchUser()
-
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-            if (session?.user) {
-                const { data: profile } = await supabase
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', session.user.id)
-                    .single()
-
-                setUser(toProfile(session.user, profile))
-            } else {
-                setUser(null)
-            }
-        })
-
-        return () => subscription.unsubscribe()
-    }, [supabase, setUser, setLoading])
 
     // Track scroll
     useEffect(() => {
@@ -205,7 +146,11 @@ export function Header() {
                             </button>
 
                             {/* User Menu */}
-                            {user ? (
+                            {isLoading ? (
+                                <Button size="sm" variant="outline" disabled>
+                                    Loading...
+                                </Button>
+                            ) : user ? (
                                 <div className="relative">
                                     <button
                                         onClick={() => setShowUserMenu(!showUserMenu)}
