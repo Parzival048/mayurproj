@@ -59,7 +59,7 @@ export default async function HomePage() {
         <div className="absolute -right-20 bottom-20 h-72 w-72 rounded-full bg-amber-300/30 blur-3xl dark:bg-amber-800/20" />
 
         <div className="relative mx-auto max-w-7xl px-4 py-20 lg:py-32">
-          <div className="grid items-center gap-12 lg:grid-cols-2">
+          <div className="grid items-center gap-12">
             {/* Content */}
             <div className="text-center lg:text-left">
               <Badge className="mb-4 inline-flex items-center gap-1 rounded-full bg-amber-100 px-4 py-1.5 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
@@ -110,40 +110,6 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Hero Image */}
-            <div className="relative hidden lg:block">
-              <div className="relative mx-auto aspect-square w-full max-w-lg">
-                <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-amber-400 to-amber-600 opacity-20 blur-2xl" />
-                <img
-                  src="https://images.unsplash.com/photo-1582126892906-5ba118eaf46e?w=800"
-                  alt="Heritage Artifact"
-                  className="relative rounded-3xl object-cover shadow-2xl"
-                />
-                {/* Floating Cards */}
-                <div className="absolute -left-8 top-1/4 animate-float rounded-xl bg-white p-4 shadow-xl dark:bg-stone-800">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
-                      <Shield className="h-5 w-5 text-green-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-stone-900 dark:text-white">100% Verified</p>
-                      <p className="text-xs text-stone-500">Authenticity Guaranteed</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="absolute -right-8 bottom-1/4 animate-float rounded-xl bg-white p-4 shadow-xl dark:bg-stone-800" style={{ animationDelay: '1s' }}>
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">
-                      <Award className="h-5 w-5 text-amber-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-stone-900 dark:text-white">Premium Quality</p>
-                      <p className="text-xs text-stone-500">Expert Curated</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
